@@ -43,17 +43,17 @@ int val(Mnode mn){
 
 int binarySearchLeaf();
 
-int findInsertPoint(Mnode arr[], int value);
+int findInsertPoint(int value);
 
-void mouldify(Mnode arr[], Mnode nod);
+void mouldify(Mnode nod);
 
-int insert(Mnode arr[], int value){
+int insert(int value){
     Lnode ln = createLnode(value);
-    Mnode ip = arr[findInsertPoint(arr, value)];
+    Mnode ip = tree[findInsertPoint(value)];
     ln->next = ip->list;
     ip->list = ln;
     ip->dirty = true;
-    mouldify(arr, ip);
+    mouldify(ip);
 }
 
 int main(){
