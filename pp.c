@@ -20,6 +20,9 @@ struct mnode {
     // i have omitted integer c as it was unnecessary for this project
 };
 
+Mnode tree[MOULD_SIZE];
+int depth = 1;
+
 Lnode createLnode(int value){
     Lnode ln = (Lnode) malloc(sizeof(struct lnode));
     ln->value = value;
@@ -54,8 +57,6 @@ int insert(Mnode arr[], int value){
 }
 
 int main(){
-    Mnode tree[MOULD_SIZE];
-    int depth = 1;
     for(int i=0;i<MOULD_SIZE;i++){
         tree[i] = (Mnode) malloc(sizeof(struct mnode));
         tree[i]->list = NULL;
