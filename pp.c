@@ -91,6 +91,5 @@ int main(){
         tree[i]->list = NULL;
         tree[i]->dirty = false;
     }
-
     return 0;
 }
