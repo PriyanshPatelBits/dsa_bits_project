@@ -6,6 +6,7 @@
 #include <time.h>
 #define T INT_MAX
 #define MOULD_SIZE 50
+#define THRESHOLD 10
 
 typedef struct lnode * Lnode;
 typedef struct mnode * Mnode;
@@ -29,10 +30,10 @@ Lnode createLnode(int value){
     ln->next = NULL;
     return ln;
 }
-int randLeaf(int d){
+int randLeaf(){
     srand(time(NULL));
-    int ran, low = (int) pow(2,d-1), upp = (int)(pow(2,d) + 1);
-    ran = (rand() % (upp - low + 1)) + low;
+    int ran, low = (int) pow(2,depth-1), upp = (int)(pow(2,depth) + 1);
+    ran = (rand() % (upp - low + 1)) + low - 1;
     return ran;
 }
 
@@ -41,16 +42,37 @@ int val(Mnode mn){
     return mn->list->value;
 }
 
-// void swap(int m1,ind m2){
-//     Mnode temp = tree[m1]
-//     m2->
-// }
+void swap(int m1, int m2){
+    Mnode temp = tree[m1];
+    tree[m1] = tree[m2];
+    tree[m2] = temp;
+}
 
-int binarySearchLeaf();
+int binarySearchLeaf(int ind, int v){
+    if (ind){
+        int par = (ind - 1) / 2;
+        if (val(tree[par]) <= v)
+            return ind;
+        else
+            binarySearchLeaf(par, v);
+    }
+    else
+        return ind;
+}
 
-int findInsertPoint(int value);
+int findInsertPoint(int value){
+    int rip=0;
+    while (true){
+        for (int i=0;i<THRESHOLD;i++){
+            rip = randLeaf();
+            if (val(tree[rip]) >= value)
+                return binarySearchLeaf(rip, value);
+        }
+        depth++;
+    }
+}
 
-// void mouldify(int ind){
+// void moundify(int ind){
 //     Mnode c1 = 
 //     if (val(nod) < )
 // }
@@ -58,13 +80,9 @@ int findInsertPoint(int value);
 int insert(int value){
     Lnode ln = createLnode(value);
     int c = findInsertPoint(value);
-    Mnode C = tree[c];
     
-    ln->next = C->list;
-    C->list = ln;
-    C->dirty = true;
-
-    mouldify(C);
+    ln->next = tree[c]->list;
+    tree[c]->list = ln;
 }
 
 int main(){
