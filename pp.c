@@ -41,19 +41,30 @@ int val(Mnode mn){
     return mn->list->value;
 }
 
+// void swap(int m1,ind m2){
+//     Mnode temp = tree[m1]
+//     m2->
+// }
+
 int binarySearchLeaf();
 
 int findInsertPoint(int value);
 
-void mouldify(Mnode nod);
+// void mouldify(int ind){
+//     Mnode c1 = 
+//     if (val(nod) < )
+// }
 
 int insert(int value){
     Lnode ln = createLnode(value);
-    Mnode ip = tree[findInsertPoint(value)];
-    ln->next = ip->list;
-    ip->list = ln;
-    ip->dirty = true;
-    mouldify(ip);
+    int c = findInsertPoint(value);
+    Mnode C = tree[c];
+    
+    ln->next = C->list;
+    C->list = ln;
+    C->dirty = true;
+
+    mouldify(C);
 }
 
 int main(){
@@ -62,5 +73,6 @@ int main(){
         tree[i]->list = NULL;
         tree[i]->dirty = false;
     }
+
     return 0;
 }
