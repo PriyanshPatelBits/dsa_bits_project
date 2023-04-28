@@ -1,3 +1,6 @@
+/*
+Mounds : write the description here of the data structure
+*/
 #include <stdio.h>
 #include <stdbool.h>
 #include <limits.h>
@@ -5,12 +8,13 @@
 #include <stdlib.h>
 #include <time.h>
 #define T INT_MAX
-#define MOULD_SIZE 100
-#define THRESHOLD 10
+#define MOULD_SIZE 127
+#define THRESHOLD 32
 
 typedef struct lnode * Lnode;
 typedef struct mnode * Mnode;
 
+// structure definition of linkedlist node and mound node
 struct lnode{
     int value;
     Lnode next;
@@ -21,9 +25,11 @@ struct mnode {
     // int c; omitted as unnecessary for this implementation
 };
 
+// global declaration for tree(mound nodes ptr array)
 Mnode tree[MOULD_SIZE];
 int depth = 0;
 
+// function for creating wrapper Lnode for given value
 Lnode createLnode(int value){
     Lnode ln = (Lnode) malloc(sizeof(struct lnode));
     ln->value = value;
@@ -31,24 +37,30 @@ Lnode createLnode(int value){
     return ln;
 }
 
+// function to generate random number/index which points to leaf nodes in tree (mound) array
 int randLeaf(){
     srand(time(NULL));
-    int ran, low = (int) (pow(2,depth) - 1), upp = (int) (pow(2,depth+1) - 2);
+    int ran;
+    int low = (int) (pow(2,depth) - 1);
+    int upp = (int) (pow(2,depth+1) - 2);
     ran = (rand() % (upp - low + 1)) + low;
     return ran;
 }
 
+// function to determine value of a mound node
 int val(Mnode mn){
     if (mn->list == NULL) return T;
     return mn->list->value;
 }
 
+// for swapping the Mnodes at two given indices in the array
 void swap(int m1, int m2){
     Mnode temp = tree[m1];
     tree[m1] = tree[m2];
     tree[m2] = temp;
 }
 
+// for selecting insertion point based parent node constraint in mound
 int binarySearchLeaf(int ind, int v){
     if (ind){
         int par = (ind - 1) / 2;
@@ -61,6 +73,7 @@ int binarySearchLeaf(int ind, int v){
         return ind;
 }
 
+// for selecting insertion point based child node constraint in mound
 int findInsertPoint(int value){
     int rip=MOULD_SIZE;
     while (true){
@@ -73,6 +86,7 @@ int findInsertPoint(int value){
     }
 }
 
+// function for inserting value into tree (mound array)
 int insert(int value){
     Lnode ln = createLnode(value);
     int c = findInsertPoint(value);
@@ -81,18 +95,18 @@ int insert(int value){
     tree[c]->list = ln;
 }
 
-// Extracts and returns the minimum element from the heap
+// Extracts and returns the minimum element from the tree(mound)
 int removeMin() {
-    if (tree[0]->list == NULL) return T; // Heap is empty, return maximum integer value
+    if (tree[0]->list == NULL) return T; // tree(mound) is empty, return maximum integer value
     int min = tree[0]->list->value; // Minimum value is at the root node
     Lnode root = tree[0]->list; // Store the root node temporarily
     tree[0]->list = tree[0]->list->next; // Replace root node with its next node
     free(root); // Free the memory allocated for the root node
-    moundify(0); // Restore the heap property starting from the root node
+    moundify(0); // Restore the mound property starting from the root node
     return min; // Return the minimum value
 }
 
-// Restores the heap property starting from the given index
+// Restores the mound property starting from the given index
 void moundify(int ind) {
     int left = 2 * ind + 1; // Calculate the left child index
     int right = 2 * ind + 2; // Calculate the right child index
@@ -107,14 +121,16 @@ void moundify(int ind) {
     }
 }
 
+// for simultaneously extracting multiple values. Extracts all values as list from the root node
 Lnode extractMany(){
-    if (tree[0]->list == NULL) return NULL; // Heap is empty, return maximum integer value
+    if (tree[0]->list == NULL) return NULL; // tree(Mound) is empty, return maximum integer value
     Lnode root = tree[0]->list; // Temporarily store the start of list to be returned
     tree[0]->list = NULL; // Make the root node empty
-    moundify(0); // Restore the heap property starting from the root node
-    return root; // Return the minimum value
+    moundify(0); // Restore the Mound property starting from the root node
+    return root; // Return the list of values
 }
 
+// print all elements of tree (mounnd) in ascending order by extracting the minimum of them multiple times
 void emptyMound(){
     printf("\n");
     while (tree[0]->list!=NULL){
@@ -148,7 +164,10 @@ int main(){
     fclose(fp);
 
     //extract and print the min value
-    printf("\nMinimum value is %d\n", removeMin);
-
+    printf("\nMinimum value is %d\n", removeMin());
+    
+    // extract and print the remaining values in ascending order
+    emptyMound();
+    
     return 0;
 }
