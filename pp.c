@@ -114,7 +114,7 @@ void moundify(int ind) {
     int smallest = ind;         // Assumes the smallest element is the parent
     if (l < MOULD_SIZE && val(tree[l]) < val(tree[smallest])) 
         smallest = l;
-    if (right < MOULD_SIZE && val(tree[r]) < val(tree[smallest]))
+    if (r < MOULD_SIZE && val(tree[r]) < val(tree[smallest]))
         smallest = r;
     if (smallest != ind) {      
         swap(ind, smallest);    // Swaps the parent with the smallest child
