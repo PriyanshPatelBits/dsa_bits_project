@@ -14,7 +14,7 @@ Mounds : write the description here of the data structure
 typedef struct lnode * Lnode;
 typedef struct mnode * Mnode;
 
-// structure definition of linkedlist node and mound node
+// Structure definition of linkedlist node and mound node
 struct lnode{
     int value;
     Lnode next;
@@ -25,11 +25,11 @@ struct mnode {
     // int c; omitted as unnecessary for this implementation
 };
 
-// global declaration for tree(mound nodes ptr array)
+// Global declaration for tree(mound nodes ptr array)
 Mnode tree[MOULD_SIZE];
 int depth = 0;
 
-// function for creating wrapper Lnode for given value
+// Function for creating wrapper Lnode for given value
 Lnode createLnode(int value){
     Lnode ln = (Lnode) malloc(sizeof(struct lnode));
     ln->value = value;
@@ -37,7 +37,7 @@ Lnode createLnode(int value){
     return ln;
 }
 
-// function to generate random number/index which points to leaf nodes in tree (mound) array
+// Function to generate random number/index which points to leaf nodes in tree (mound) array
 int randLeaf(){
     srand(time(NULL));
     int ran;
@@ -47,20 +47,20 @@ int randLeaf(){
     return ran;
 }
 
-// function to determine value of a mound node
+// Function to determine value of a mound node
 int val(Mnode mn){
     if (mn->list == NULL) return T;
     return mn->list->value;
 }
 
-// for swapping the Mnodes at two given indices in the array
+// For swapping the Mnodes at two given indices in the array
 void swap(int m1, int m2){
     Mnode temp = tree[m1];
     tree[m1] = tree[m2];
     tree[m2] = temp;
 }
 
-// for selecting insertion point based parent node constraint in mound
+// For selecting insertion point based parent node constraint in mound
 int binarySearchLeaf(int ind, int v){
     if (ind){
         int par = (ind - 1) / 2;
@@ -73,7 +73,7 @@ int binarySearchLeaf(int ind, int v){
         return ind;
 }
 
-// for selecting insertion point based child node constraint in mound
+// For selecting insertion point based child node constraint in mound
 int findInsertPoint(int value){
     int rip=MOULD_SIZE;
     while (true){
@@ -86,7 +86,7 @@ int findInsertPoint(int value){
     }
 }
 
-// function for inserting value into tree (mound array)
+// Function for inserting value into tree (mound array)
 int insert(int value){
     Lnode ln = createLnode(value);
     int c = findInsertPoint(value);
@@ -97,40 +97,41 @@ int insert(int value){
 
 // Extracts and returns the minimum element from the tree(mound)
 int removeMin() {
-    if (tree[0]->list == NULL) return T; // tree(mound) is empty, return maximum integer value
+    if (tree[0]->list == NULL) 
+        return T;                   // Tree(mound) is empty, return maximum integer value
     int min = tree[0]->list->value; // Minimum value is at the root node
-    Lnode root = tree[0]->list; // Store the root node temporarily
-    tree[0]->list = tree[0]->list->next; // Replace root node with its next node
-    free(root); // Free the memory allocated for the root node
-    moundify(0); // Restore the mound property starting from the root node
-    return min; // Return the minimum value
+    Lnode root = tree[0]->list;     // Stores the root node temporarily
+    tree[0]->list = tree[0]->list->next; // Replaces root node with its next node
+    free(root);                     // Free the memory allocated for the root node
+    moundify(0);                    // Restores the mound property starting from the root node
+    return min;                     // Returns the minimum value
 }
 
 // Restores the mound property starting from the given index
 void moundify(int ind) {
-    int left = 2 * ind + 1; // Calculate the left child index
-    int right = 2 * ind + 2; // Calculate the right child index
-    int smallest = ind; // Assume the smallest element is the parent
-    if (left < MOULD_SIZE && val(tree[left]) < val(tree[smallest])) // If the left child is smaller than the parent
-        smallest = left;
-    if (right < MOULD_SIZE && val(tree[right]) < val(tree[smallest])) // If the right child is smaller than the parent or left child
-        smallest = right;
-    if (smallest != ind) { // If the smallest element is not the parent
-        swap(ind, smallest); // Swap the parent with the smallest child
-        moundify(smallest); // Recursively moundify the subtree rooted at the smallest child
+    int l = 2 * ind + 1;     // Calculates the index of left child
+    int r = 2 * ind + 2;    // Calculates the index of right child
+    int smallest = ind;         // Assumes the smallest element is the parent
+    if (l < MOULD_SIZE && val(tree[l]) < val(tree[smallest])) 
+        smallest = l;
+    if (right < MOULD_SIZE && val(tree[r]) < val(tree[smallest]))
+        smallest = r;
+    if (smallest != ind) {      
+        swap(ind, smallest);    // Swaps the parent with the smallest child
+        moundify(smallest);     // Recursively moundify the subtree rooted at the smallest child
     }
 }
 
-// for simultaneously extracting multiple values. Extracts all values as list from the root node
+// For simultaneously extracting multiple values. Extracts all values as list from the root node
 Lnode extractMany(){
-    if (tree[0]->list == NULL) return NULL; // tree(Mound) is empty, return maximum integer value
-    Lnode root = tree[0]->list; // Temporarily store the start of list to be returned
-    tree[0]->list = NULL; // Make the root node empty
-    moundify(0); // Restore the Mound property starting from the root node
-    return root; // Return the list of values
+    if (tree[0]->list == NULL) return NULL; // Tree(Mound) is empty, return maximum integer value
+    Lnode root = tree[0]->list;             // Temporarily stores the start of list to be returned
+    tree[0]->list = NULL;                   // Makes the root node empty
+    moundify(0);                            // Restores the Mound property starting from the root node
+    return root;                            // Returns the list of values
 }
 
-// print all elements of tree (mounnd) in ascending order by extracting the minimum of them multiple times
+// Prints all elements of tree (mounnd) in ascending order by extracting the minimum of them multiple times
 void emptyMound(){
     printf("\n");
     while (tree[0]->list!=NULL){
