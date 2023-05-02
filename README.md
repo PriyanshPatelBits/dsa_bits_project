@@ -1,3 +1,5 @@
+
+```c
 Project no.5
 Group 50
 CS F211 DSA 2022-23 Sem 2
@@ -11,3 +13,4 @@ for unix-based systems :
 For windows systems :
 "gcc DSA_assignment_group_50.c -o DSA_assignment_group_50.exe"
 ".\DSA_assignment_group_50.exe <data_filename.extension>"
+```
