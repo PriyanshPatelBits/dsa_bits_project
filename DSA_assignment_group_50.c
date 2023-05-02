@@ -106,7 +106,7 @@ int findInsertPoint(int value){
 }
 
 // function for inserting value into tree (mound array)
-int insert(int value){
+void insert(int value){
     Lnode ln = createLnode(value);
     int c = findInsertPoint(value);
     ln->next = tree[c]->list;
