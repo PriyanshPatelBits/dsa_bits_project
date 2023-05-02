@@ -8,31 +8,40 @@ Mounds : write the description here of the data structure
 #include <stdlib.h>
 #include <time.h>
 #define T INT_MAX
-#define MOUND_SIZE 131071
-#define MAX_DEPTH 16
+
+int mound_size = 127;
+int max_depth = 6;
+int threshold = 1;
 
 typedef struct lnode * Lnode;
+typedef struct mnode * Mnode;
 
-// structure definition of linkedlist node
+// structure definition of linkedlist node and mound node
 struct lnode{
     int value;
     Lnode next;
 };
+struct mnode {
+    Lnode list;
+    // bool dirty; omitted as unnecessary for this implementation
+    // int c; omitted as unnecessary for this implementation
+};
 
-// global declaration for tree(mound array (array of LL pointers))
-Lnode *tree;
+// global declaration for tree(mound nodes ptr array)
+Mnode *tree;
 int depth = 0;
-int threshold = 1;
 
-// void inc_and_recalculate(){
-//     int old_size = MOUND_SIZE;
-//     MOUND_SIZE = (MOUND_SIZE + 1) * 8 - 1;
-//     max_depth = max_depth + 3;
-//     tree = (Lnode *) realloc(tree, (MOUND_SIZE * sizeof(Lnode)));
-//     for (int i=old_size;i<MOUND_SIZE;i++){
-//         tree[i] = NULL;
-//     }
-// }
+
+void inc_and_recalculate(){
+    int old_size = mound_size;
+    mound_size = (mound_size + 1) * 8 - 1;
+    max_depth = max_depth + 3;
+    tree = (Mnode *) realloc(tree, (mound_size * sizeof(Mnode)));
+    for (int i=old_size;i<mound_size;i++){
+        tree[i] = (Mnode) malloc(sizeof(struct mnode));
+        tree[i]->list = NULL;
+    }
+}
 
 // function for creating wrapper Lnode for given value
 Lnode createLnode(int value){
@@ -53,15 +62,14 @@ int randLeaf(){
 }
 
 // function to determine value of a mound node
-int val(Lnode mn){
-    if (mn == NULL) return T;
-    return mn->value;
+int val(Mnode mn){
+    if (mn->list == NULL) return T;
+    return mn->list->value;
 }
 
 // for swapping the Mnodes at two given indices in the array
 void swap(int m1, int m2){
-    
-    Lnode temp = tree[m1];
+    Mnode temp = tree[m1];
     tree[m1] = tree[m2];
     tree[m2] = temp;
 }
@@ -81,15 +89,15 @@ int binarySearchLeaf(int ind, int v){
 
 // for selecting insertion point based child node constraint in mound
 int findInsertPoint(int value){
-    int rip=MOUND_SIZE;
+    int rip=mound_size;
     while (true){
         for (int i=0;i<threshold;i++){
             rip = randLeaf();
             if (val(tree[rip]) >= value)
                 return binarySearchLeaf(rip, value);
         }
-        if (depth == MAX_DEPTH)
-            exit(1);
+        if (depth == max_depth)
+            inc_and_recalculate();
         depth++;
         threshold = threshold * 2;
     }
@@ -99,31 +107,29 @@ int findInsertPoint(int value){
 int insert(int value){
     Lnode ln = createLnode(value);
     int c = findInsertPoint(value);
-    ln->next = tree[c];
-    tree[c] = ln;
+    ln->next = tree[c]->list;
+    tree[c]->list = ln;
 }
 
 // Extracts and returns the minimum element from the tree(mound)
 int removeMin() {
-    if (tree[0]==NULL){ // tree(mound) is empty, return maximum integer value
-        return T;
-    }
-    int min = tree[0]->value; // Minimum value is at the root node
-    Lnode root = tree[0]; // Store the root node temporarily
-    tree[0] = tree[0]->next; // Replace root node with its next node
+    if (tree[0]->list == NULL) return T; // tree(mound) is empty, return maximum integer value
+    int min = tree[0]->list->value; // Minimum value is at the root node
+    Lnode root = tree[0]->list; // Store the root node temporarily
+    tree[0]->list = tree[0]->list->next; // Replace root node with its next node
     free(root); // Free the memory allocated for the root node
     moundify(0); // Restore the mound property starting from the root node
     return min; // Return the minimum value
 }
 
-// Restores the mound property starting from the given index going recursively
+// Restores the mound property starting from the given index
 void moundify(int ind) {
     int left = 2 * ind + 1; // Calculate the left child index
     int right = 2 * ind + 2; // Calculate the right child index
     int smallest = ind; // Assume the smallest element is the parent
-    if (left < MOUND_SIZE && val(tree[left]) < val(tree[smallest])) // If the left child is smaller than the parent
+    if (left < mound_size && val(tree[left]) < val(tree[smallest])) // If the left child is smaller than the parent
         smallest = left;
-    if (right < MOUND_SIZE && val(tree[right]) < val(tree[smallest])) // If the right child is smaller than the parent or left child
+    if (right < mound_size && val(tree[right]) < val(tree[smallest])) // If the right child is smaller than the parent or left child
         smallest = right;
     if (smallest != ind) { // If the smallest element is not the parent
         swap(ind, smallest); // Swap the parent with the smallest child
@@ -133,9 +139,9 @@ void moundify(int ind) {
 
 // for simultaneously extracting multiple values. Extracts all values as list from the root node
 Lnode extractMany(){
-    if (tree[0] == NULL) return NULL; // tree(Mound) is empty, return Empty linked list
-    Lnode root = tree[0]; // Temporarily store the start of list to be returned
-    tree[0] = NULL; // Make the root node empty
+    if (tree[0]->list == NULL) return NULL; // tree(Mound) is empty, return maximum integer value
+    Lnode root = tree[0]->list; // Temporarily store the start of list to be returned
+    tree[0]->list = NULL; // Make the root node empty
     moundify(0); // Restore the Mound property starting from the root node
     return root; // Return the list of values
 }
@@ -143,7 +149,7 @@ Lnode extractMany(){
 // print all elements of tree (mounnd) in ascending order by extracting the minimum of them multiple times
 void emptyMound(){
     printf("\n");
-    while (tree[0]!=NULL){
+    while (tree[0]->list!=NULL){
         printf("%d ", removeMin());
     }
     printf("\nMound emptied and printed successfully\n");
@@ -159,9 +165,10 @@ void readData(FILE* fp){
 
 int main(){
     // initializing the tree (array of Mound nodes ptrs)
-    tree = (Lnode *) malloc(MOUND_SIZE * sizeof(Lnode));
-    for(int i=0;i<MOUND_SIZE;i++){
-        tree[i] = NULL;
+    tree = (Mnode *) malloc(mound_size * sizeof(Mnode));
+    for(int i=0;i<mound_size;i++){
+        tree[i] = (Mnode) malloc(sizeof(struct mnode));
+        tree[i]->list = NULL;
     }
 
     // reading Data from file for insertion into tree
