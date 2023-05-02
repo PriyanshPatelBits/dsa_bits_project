@@ -9,12 +9,9 @@ Mounds : write the description here of the data structure
 #include <time.h>
 #define T INT_MAX
 
-// global declaration for tree(mound array (array of LL pointers))
-Lnode *tree;
-int depth = 0;
 int mound_size = 127;
 int max_depth = 6;
-int threshold = 32;
+int threshold = 1;
 
 typedef struct lnode * Lnode;
 
@@ -24,7 +21,9 @@ struct lnode{
     Lnode next;
 };
 
-
+// global declaration for tree(mound array (array of LL pointers))
+Lnode *tree;
+int depth = 0;
 
 void inc_and_recalculate(){
     int old_size = mound_size;
@@ -107,7 +106,7 @@ int insert(int value){
 
 // Extracts and returns the minimum element from the tree(mound)
 int removeMin() {
-    if (val(tree[0])){ // tree(mound) is empty, return maximum integer value
+    if (tree[0]==NULL){ // tree(mound) is empty, return maximum integer value
         return T;
     }
     int min = tree[0]->value; // Minimum value is at the root node
