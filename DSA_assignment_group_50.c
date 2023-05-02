@@ -78,7 +78,7 @@ void swap(int m1, int m2){
 int binarySearchLeaf(int ind, int v){
     if (ind){
         int par = (ind - 1) / 2;
-        if (val(tree[par]) <= v)
+        if (val(tree[par]) < v)
             return ind;
         else
             binarySearchLeaf(par, v);
@@ -163,7 +163,7 @@ void readData(FILE* fp){
     }
 }
 
-int main(){
+int main(int argc, char *argv[]){
     // initializing the tree (array of Mound nodes ptrs)
     tree = (Mnode *) malloc(mound_size * sizeof(Mnode));
     for(int i=0;i<mound_size;i++){
@@ -172,7 +172,7 @@ int main(){
     }
 
     // reading Data from file for insertion into tree
-    FILE* fp = fopen("data.txt", "r");
+    FILE* fp = fopen(argv[1], "r");
     if (fp==NULL){
         printf("File didn't open successfully");
         exit(1);
