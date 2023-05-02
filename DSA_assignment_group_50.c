@@ -33,7 +33,7 @@ struct mnode {
 Mnode *tree;
 int depth = 0;
 
-
+// increases mound_size approx 8 times and increases max_depth by 3 and allocates space to tree and new Mnodes
 void inc_and_recalculate(){
     int old_size = mound_size;
     mound_size = (mound_size + 1) * 8 - 1;
