@@ -1,5 +1,7 @@
 /*
-Mounds : write the description here of the data structure
+Mound (each node is mnode) is an array based priority queue implementation designed for concurrency in mind.
+However concurrency related aspects are not included in this code file.
+insertion time is O(log(log(n))) and removeMin (commonly called extractMin) operation is O(log(n)) Time complexity.
 */
 #include <stdio.h>
 #include <stdbool.h>
