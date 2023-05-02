@@ -8,10 +8,8 @@ Mounds : write the description here of the data structure
 #include <stdlib.h>
 #include <time.h>
 #define T INT_MAX
-
-int mound_size = 127;
-int max_depth = 6;
-int threshold = 1;
+#define MOUND_SIZE 131071
+#define MAX_DEPTH 16
 
 typedef struct lnode * Lnode;
 
@@ -24,16 +22,17 @@ struct lnode{
 // global declaration for tree(mound array (array of LL pointers))
 Lnode *tree;
 int depth = 0;
+int threshold = 1;
 
-void inc_and_recalculate(){
-    int old_size = mound_size;
-    mound_size = (mound_size + 1) * 8 - 1;
-    max_depth = max_depth + 3;
-    tree = (Lnode *) realloc(tree, (mound_size * sizeof(Lnode)));
-    for (int i=old_size;i<mound_size;i++){
-        tree[i] = NULL;
-    }
-}
+// void inc_and_recalculate(){
+//     int old_size = MOUND_SIZE;
+//     MOUND_SIZE = (MOUND_SIZE + 1) * 8 - 1;
+//     max_depth = max_depth + 3;
+//     tree = (Lnode *) realloc(tree, (MOUND_SIZE * sizeof(Lnode)));
+//     for (int i=old_size;i<MOUND_SIZE;i++){
+//         tree[i] = NULL;
+//     }
+// }
 
 // function for creating wrapper Lnode for given value
 Lnode createLnode(int value){
@@ -82,15 +81,15 @@ int binarySearchLeaf(int ind, int v){
 
 // for selecting insertion point based child node constraint in mound
 int findInsertPoint(int value){
-    int rip=mound_size;
+    int rip=MOUND_SIZE;
     while (true){
         for (int i=0;i<threshold;i++){
             rip = randLeaf();
             if (val(tree[rip]) >= value)
                 return binarySearchLeaf(rip, value);
         }
-        if (depth == max_depth)
-            inc_and_recalculate();
+        if (depth == MAX_DEPTH)
+            exit(1);
         depth++;
         threshold = threshold * 2;
     }
@@ -122,9 +121,9 @@ void moundify(int ind) {
     int left = 2 * ind + 1; // Calculate the left child index
     int right = 2 * ind + 2; // Calculate the right child index
     int smallest = ind; // Assume the smallest element is the parent
-    if (left < mound_size && val(tree[left]) < val(tree[smallest])) // If the left child is smaller than the parent
+    if (left < MOUND_SIZE && val(tree[left]) < val(tree[smallest])) // If the left child is smaller than the parent
         smallest = left;
-    if (right < mound_size && val(tree[right]) < val(tree[smallest])) // If the right child is smaller than the parent or left child
+    if (right < MOUND_SIZE && val(tree[right]) < val(tree[smallest])) // If the right child is smaller than the parent or left child
         smallest = right;
     if (smallest != ind) { // If the smallest element is not the parent
         swap(ind, smallest); // Swap the parent with the smallest child
@@ -160,8 +159,8 @@ void readData(FILE* fp){
 
 int main(){
     // initializing the tree (array of Mound nodes ptrs)
-    tree = (Lnode *) malloc(mound_size * sizeof(Lnode));
-    for(int i=0;i<mound_size;i++){
+    tree = (Lnode *) malloc(MOUND_SIZE * sizeof(Lnode));
+    for(int i=0;i<MOUND_SIZE;i++){
         tree[i] = NULL;
     }
 
