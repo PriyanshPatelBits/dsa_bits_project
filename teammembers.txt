@@ -1,6 +1,7 @@
 Group members:
+
 Priyansh Patel              2021A7PS2682P
 Sarthak Gupta               2020A8PS1821P
 Chaitanya Krishna Chauhan   2020A4PS1869P
 Jainam Doshi                2020A4PS1089P
-Aaryan Raj Jindal			2020B3A70781P
+Aaryan Raj Jindal			      2020B3A70781P
