@@ -158,11 +158,17 @@ void emptyMound(){
 }
 
 // reading Data from file for insertion into tree
-void readData(FILE* fp){
+void readData(char name[]){
+    FILE* fp = fopen(name, "r");
+    if (fp==NULL){
+        printf("File didn't open successfully");
+        exit(1);
+    }
     int num;
     while (fscanf(fp, "%d", &num) == 1) {
         insert(num);
     }
+    fclose(fp);
 }
 
 int main(int argc, char *argv[]){
@@ -174,13 +180,7 @@ int main(int argc, char *argv[]){
     }
 
     // reading Data from file for insertion into tree
-    FILE* fp = fopen(argv[1], "r");
-    if (fp==NULL){
-        printf("File didn't open successfully");
-        exit(1);
-    }
-    readData(fp);
-    fclose(fp);
+    readData(argv[1]);
 
     //extract and print the min value
     printf("\nMinimum value is %d\n", removeMin());
