@@ -11,7 +11,7 @@ Mounds : write the description here of the data structure
 
 int mound_size = 127;
 int max_depth = 6;
-int threshold = 32;
+int threshold = 1;
 
 typedef struct lnode * Lnode;
 typedef struct mnode * Mnode;
